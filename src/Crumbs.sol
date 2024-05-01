@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-contract CrumbsSocial {
+contract Crumbs {
     // Event to emit when a comment is stored
     event CommentStored(bytes32 indexed url, bytes32 commentHash, address indexed user);
 

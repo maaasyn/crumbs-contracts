@@ -1,4 +1,5 @@
 [profile.default]
+remappings = ["src/=src/"]
 src = "src"
 out = "out"
 libs = ["lib"]

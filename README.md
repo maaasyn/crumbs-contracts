@@ -4,10 +4,10 @@
 
 Foundry consists of:
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
 ## Documentation
 
@@ -48,7 +48,12 @@ $ anvil
 ### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+source .env; forge script script/Crumbs.s.sol:CrumbsScript --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
+
+```
+
+```sh
+source .env; forge script script/Crumbs.s.sol:Crumbs --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
 ### Cast
@@ -63,4 +68,16 @@ $ cast <subcommand>
 $ forge --help
 $ anvil --help
 $ cast --help
+```
+
+Started with:
+
+```
+ cast keccak "freedom at all costs"
+```
+
+on the
+
+```
+
 ```
