@@ -70,14 +70,8 @@ $ anvil --help
 $ cast --help
 ```
 
-Started with:
+inspect:
 
 ```
- cast keccak "freedom at all costs"
-```
-
-on the
-
-```
-
+forge inspect ./src/Crumbs.sol:Crumbs storage-layout --pretty
 ```
