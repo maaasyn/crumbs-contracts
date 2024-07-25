@@ -1,9 +1,21 @@
 [profile.default]
-remappings = ["src/=src/", "lib/=lib/"]
+remappings = [
+    "src/=src/",
+    "lib/=lib/",
+    "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts",
+    "forge-std/=lib/forge-std/src/",
+]
 src = "src"
 out = "out"
 libs = ["lib"]
 solc_version = "0.8.20"
 
 optimizer = true
+ffi = true
+ast = true
+build_info = true
+extra_output = ["storageLayout"]
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+
+# source .env; forge script script/CrumbsDiamond.s.sol:CrumbsDiamondScript --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast --verify

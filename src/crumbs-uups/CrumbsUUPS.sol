@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-contract Crumbs {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
+contract CrumbsUpgradeable is UUPSUpgradeable, OwnableUpgradeable {
     /// TOTAL 2 storage slots
     struct Comment {
         bytes32 commentHash;
@@ -19,10 +22,35 @@ contract Crumbs {
 
     mapping(bytes32 => Comment[]) public commentsByCrumbCommitment;
 
+    // /// @custom:oz-upgrades-unsafe-allow constructor
+    // constructor() {
+    //     _disableInitializers();
+    // }
+
+    function initialize(address initialOwner) public initializer {
+        __Ownable_init(initialOwner);
+        __UUPSUpgradeable_init();
+    }
+
     function storeCommentAndReplaceTimestamp(bytes32 _commitment, bytes32 _commentHash, uint96 _additionalData)
         public
     {
-        // Block producers can lie about the timestamp, but it's still useful for ordering comments
+        uint40 timestamp = uint40(block.timestamp);
+        uint56 rest = uint56(0);
+        uint96 newAdditionalData = uint96(uint96(timestamp) << 56) | uint96(rest);
+
+        Comment memory newComment =
+            Comment({commentHash: _commentHash, user: msg.sender, additionalData: newAdditionalData});
+
+        commentsByCrumbCommitment[_commitment].push(newComment);
+        uint256 commentIndex = commentsByCrumbCommitment[_commitment].length - 1;
+        emit CommentStored(_commitment, _commentHash, msg.sender, newAdditionalData, commentIndex);
+    }
+
+    function storeCommentAndReplaceTimestampRaw(bytes32 _commitment, bytes32 _commentHash, uint96 _additionalData)
+        public
+        onlyOwner
+    {
         uint40 timestamp = uint40(block.timestamp);
         uint56 rest = uint56(_additionalData);
         uint96 newAdditionalData = uint96(uint96(timestamp) << 56) | uint96(rest);
@@ -47,7 +75,7 @@ contract Crumbs {
         return getAllCommentsByCrumbCommitment(_commitment);
     }
 
-    function storeCommentRaw(bytes32 _commitment, bytes32 _commentHash, uint96 _additionalData) public {
+    function storeCommentRaw(bytes32 _commitment, bytes32 _commentHash, uint96 _additionalData) public onlyOwner {
         Comment memory newComment =
             Comment({commentHash: _commentHash, user: msg.sender, additionalData: _additionalData});
 
@@ -57,7 +85,7 @@ contract Crumbs {
     }
 
     function getCurrentTimestamp() public view returns (uint256) {
-        return uint256(block.timestamp);
+        return block.timestamp;
     }
 
     function packAdditionalData(uint40 timestamp, uint56 rest) public pure returns (uint96) {
@@ -74,4 +102,6 @@ contract Crumbs {
         Comment storage comment = commentsByCrumbCommitment[_commitment][index];
         return (comment.commentHash, comment.user, comment.additionalData);
     }
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

@@ -75,3 +75,26 @@ inspect:
 ```
 forge inspect ./src/Crumbs.sol:Crumbs storage-layout --pretty
 ```
+
+<!--
+  Crumbs Diamond deployed at address: 0x498099e413aC3c0b214bA181B3787b7F637a2c21
+  Crumbs Facet deployed at address: 0x51C8e2ca67F800115f16C4B18DCf17BF7Ed44f8b -->
+
+```sh
+
+cast calldata "storeCommentAndReplaceTimestamp(bytes32,bytes32,uint96)" 0x00238809d48a86b3a841a3f501d566475cde08f38cb75969645733a83e43306a 0x77dcd57beb1f0f2e28ea0f01df187f9912d3a78de5e0bd8abf37307a7e9b7596 0
+
+cast send --private-key $PRIVATE_KEY --rpc-url $RPC_URL $PROXY_CONTRACT_ADDRESS $(cast calldata "storeCommentAndReplaceTimestamp(bytes32,bytes32,uint96)" 0x00238809d48a86b3a841a3f501d566475cde08f38cb75969645733a83e43306a 0x77dcd57beb1f0f2e28ea0f01df187f9912d3a78de5e0bd8abf37307a7e9b7596 0)
+
+```
+
+Get all comments by commitment:
+
+```sh
+source .env; cast call $PROXY_CONTRACT_ADDRESS "getAllCommentsByCrumbCommitment(bytes32)((bytes32,address,uint96)[])" 0x00238809d48a86b3a841a3f501d566475cde08f38cb75969645733a83e43306a --rpc-url $RPC_URL
+[(0x77dcd57beb1f0f2e28ea0f01df187f9912d3a78de5e0bd8abf373
+```
+
+<!-- proper implementation of diamond -->
+
+https://louper.dev/diamond/0x10e138877df69ca44fdc68655f86c88cde142d7f?network=mainnet

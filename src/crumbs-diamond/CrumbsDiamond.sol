@@ -10,9 +10,9 @@ contract CrumbsDiamond is Initializable, OwnableUpgradeable {
     event FacetAdded(bytes4 indexed selector, address indexed facet);
     event FacetReplaced(bytes4 indexed selector, address indexed oldFacet, address indexed newFacet);
 
-    constructor() {
-        _disableInitializers();
-    }
+    // constructor() {
+    //     _disableInitializers();
+    // }
 
     function initialize(address initialOwner) public initializer {
         __Ownable_init(initialOwner);
@@ -31,13 +31,13 @@ contract CrumbsDiamond is Initializable, OwnableUpgradeable {
         }
     }
 
-    function addFacet(bytes4 _selector, address _facet) external {
+    function addFacet(bytes4 _selector, address _facet) external onlyOwner {
         require(facets[_selector] == address(0), "Facet already exists");
         facets[_selector] = _facet;
         emit FacetAdded(_selector, _facet);
     }
 
-    function replaceFacet(bytes4 _selector, address _newFacet) external {
+    function replaceFacet(bytes4 _selector, address _newFacet) external onlyOwner {
         address oldFacet = facets[_selector];
         require(oldFacet != address(0), "Facet does not exist");
         facets[_selector] = _newFacet;
