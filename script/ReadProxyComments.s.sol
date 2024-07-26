@@ -11,31 +11,34 @@ import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 /**
  * @dev Sample script to deploy and upgrade contracts using UUPS
  */
-contract CreateUUPSProxyScript is Script {
+contract ReadProxyComments is Script {
     function setUp() public {}
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address deployerAddress = vm.envAddress("PUBLIC_ADDRESS");
+        address proxyAddress = vm.envAddress("PROXY_ADDRESS");
+
         console2.log("Deployer Address: %s", address(deployerAddress));
+        console2.log("Proxy Address: %s", address(proxyAddress));
 
         // Ensure the deployer address is present
         require(deployerAddress != address(0), "Invalid deployer address");
+        require(proxyAddress != address(0), "Invalid proxy address");
 
         vm.startBroadcast(deployerPrivateKey);
 
-        address uupsProxy = Upgrades.deployUUPSProxy(
-            "CrumbsUpgradeable.sol", abi.encodeCall(CrumbsUpgradeable.initialize, (deployerAddress))
-        );
+        bytes32 _commitment = keccak256("https://example.com/");
 
-        console2.log("Proxy Address: %s", address(uupsProxy));
+        CrumbsUpgradeable.Comment[] memory comments =
+            CrumbsUpgradeable(proxyAddress).getAllCommentsByCrumbCommitment(_commitment);
 
-        address proxyOwner = CrumbsUpgradeable(uupsProxy).owner();
-        console2.log("Proxy Owner: %s", address(proxyOwner));
+        console2.log("Comments length: %s", comments.length);
 
-        require(proxyOwner == deployerAddress, "Deployer is not the owner of the proxy contract");
-
-        require(proxyOwner == deployerAddress, "Deployer is not the owner of the proxy contract");
+        // // Read the comments
+        // for (uint256 i = 0; i < comments.length; i++) {
+        //     console2.log("Comment %s: %s", i, comments[i]);
+        // }
 
         vm.stopBroadcast();
     }

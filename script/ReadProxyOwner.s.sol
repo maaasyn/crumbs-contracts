@@ -11,29 +11,25 @@ import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 /**
  * @dev Sample script to deploy and upgrade contracts using UUPS
  */
-contract CreateUUPSProxyScript is Script {
+contract ReadProxyOwner is Script {
     function setUp() public {}
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address deployerAddress = vm.envAddress("PUBLIC_ADDRESS");
+        address proxyAddress = vm.envAddress("PROXY_ADDRESS");
+
         console2.log("Deployer Address: %s", address(deployerAddress));
+        console2.log("Proxy Address: %s", address(proxyAddress));
 
         // Ensure the deployer address is present
         require(deployerAddress != address(0), "Invalid deployer address");
+        require(proxyAddress != address(0), "Invalid proxy address");
 
         vm.startBroadcast(deployerPrivateKey);
 
-        address uupsProxy = Upgrades.deployUUPSProxy(
-            "CrumbsUpgradeable.sol", abi.encodeCall(CrumbsUpgradeable.initialize, (deployerAddress))
-        );
-
-        console2.log("Proxy Address: %s", address(uupsProxy));
-
-        address proxyOwner = CrumbsUpgradeable(uupsProxy).owner();
+        address proxyOwner = CrumbsUpgradeable(proxyAddress).owner();
         console2.log("Proxy Owner: %s", address(proxyOwner));
-
-        require(proxyOwner == deployerAddress, "Deployer is not the owner of the proxy contract");
 
         require(proxyOwner == deployerAddress, "Deployer is not the owner of the proxy contract");
 

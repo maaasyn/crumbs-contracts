@@ -1,10 +1,25 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract CrumbsUpgradeable is UUPSUpgradeable, OwnableUpgradeable {
+contract CrumbsUpgradeable is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address initialOwner) public initializer {
+        __Ownable_init(initialOwner);
+        __UUPSUpgradeable_init();
+    }
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+    mapping(bytes32 => Comment[]) public commentsByCrumbCommitment;
+
     /// TOTAL 2 storage slots
     struct Comment {
         bytes32 commentHash;
@@ -19,18 +34,6 @@ contract CrumbsUpgradeable is UUPSUpgradeable, OwnableUpgradeable {
         uint96 additionalData,
         uint256 commentIndex
     );
-
-    mapping(bytes32 => Comment[]) public commentsByCrumbCommitment;
-
-    // /// @custom:oz-upgrades-unsafe-allow constructor
-    // constructor() {
-    //     _disableInitializers();
-    // }
-
-    function initialize(address initialOwner) public initializer {
-        __Ownable_init(initialOwner);
-        __UUPSUpgradeable_init();
-    }
 
     function storeCommentAndReplaceTimestamp(bytes32 _commitment, bytes32 _commentHash, uint96 _additionalData)
         public
@@ -102,6 +105,4 @@ contract CrumbsUpgradeable is UUPSUpgradeable, OwnableUpgradeable {
         Comment storage comment = commentsByCrumbCommitment[_commitment][index];
         return (comment.commentHash, comment.user, comment.additionalData);
     }
-
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

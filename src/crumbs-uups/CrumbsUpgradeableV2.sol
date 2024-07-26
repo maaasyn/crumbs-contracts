@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "src/crumbs-uups/CrumbsUUPS.sol";
+import {CrumbsUpgradeable} from "src/crumbs-uups/CrumbsUpgradeable.sol";
 
+/// @custom:oz-upgrades-from CrumbsUpgradeable
 contract CrumbsUpgradeableV2 is CrumbsUpgradeable {
     //     95                   55       40           0
     // |---- timestamp -----|replyToIndex|-unused-|
